@@ -13,10 +13,18 @@ public class StringInterpolationServiceTests
 
     public StringInterpolationServiceTests()
     {
+        // Mock is a library, 'Using Moq;' it is mimmicking a ISystemDate type, passing it to a variable and 
+        // creating a new 'ghost' variant. Passing it a specific stretch of DateTime
         Mock<ISystemDate> mockDate = new();
         DateTime testDate = new(2019, 01, 22, 23, 01, 27);
 
-        mockDate.Setup(x => x.Now).Returns(testDate);
+        // Telling it to not actually call the SystemDate.Now, but to return our fabricated DateTime
+        // A new fake version of ISystemDate + .Setup ( 'x' represents the SystemDate class.
+        mockDate.Setup(x => x.Now).Returns(testDate);  
+        
+        // The test doesn't care about x.Read because we created a Mock version. Even if the Read() in
+        // the actual project doesn't work, the Test will still run and accept it because of mock.
+        //mockDate.Setup(x => x.Read()).Returns(3);
         _service = new StringInterpolationService(mockDate.Object, NullLogger<IStringInterpolationService>.Instance);
     }
 
@@ -98,5 +106,10 @@ public class StringInterpolationServiceTests
         var response = _service.Number10();
 
         Assert.Equal("     3.142", response);
+    }
+    [Fact]
+    public void StringInterpolationService_Number11_Success()
+    {
+
     }
 }
